@@ -10,6 +10,8 @@ Purpose: Help associates plan and track supply orders effectively.
 //Requirements
 const express = require('express');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+const secrets = require('./util/secrets')
 
 //Port to listen to
 const PORT = 3000;
@@ -23,6 +25,7 @@ const app = express();
 //Middleware
 //Middleware to parse json data
 app.use(bodyParser.json());
+//Temporary for testing with HTML
 app.use(bodyParser.urlencoded({extended: false}));
 
 //Set headers for our requests
@@ -42,4 +45,15 @@ app.get('/', function(req, res){
 //Routes Middleware
 app.use('/mgr', mgrRoutes);
 
-app.listen(PORT)
+console.log("Connecting to DB...")
+mongoose.connect(secrets.MONGODBURI)
+.then(res =>
+  {
+    console.log("Connection to DB Success...")
+    app.listen(PORT)
+    console.log("Server listening for connections...")
+  })
+  .catch(err =>
+    {
+      console.log("ERROR: "+ err)
+    })
